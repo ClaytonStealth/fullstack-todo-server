@@ -97,4 +97,48 @@ router.post("/create-one", async (req, res) => {
   }
 });
 
+router.put("/update-one/:id", async (req, res) => {
+  try {
+    const idParam = req.params.id;
+    const newToDo = req.body;
+
+    if (newToDo.isComplete !== undefined) {
+      if (newToDo.isComplete === true) {
+        newToDo.completedDate = new Date();
+      } else {
+        newToDo.completedDate = null;
+      }
+    }
+    const result = await db()
+      .collection("todos")
+      .updateOne({ id: idParam }, { $set: newToDo });
+    res.json({
+      success: true,
+      result,
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
+
+router.delete("/delete-one/:id", async (req, res) => {
+  try {
+    const idParam = req.params.id;
+    const result = await db().collection("todos").deleteOne({ id: idParam });
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
+
 module.exports = router;
