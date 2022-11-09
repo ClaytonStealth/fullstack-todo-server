@@ -60,8 +60,16 @@ const mockTodos = [
   },
 ];
 router.get("/all", async (req, res) => {
+  const limit = Number(req.query.limit);
+  const page = Number(req.query.page);
+  const skip = (page - 1) * limit;
   try {
-    const todos = await db().collection("todos").find({}).toArray();
+    const todos = await db()
+      .collection("todos")
+      .find({})
+      .limit(limit)
+      .skip(skip)
+      .toArray();
     res.json({
       success: true,
       todos,
